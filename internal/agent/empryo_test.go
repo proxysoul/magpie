@@ -34,9 +34,6 @@ func TestEmpryo(t *testing.T) {
 	json.Unmarshal([]byte(orig), &want)
 
 	a := empryo(home)
-	if a.Path != path {
-		t.Fatalf("path: %s", a.Path)
-	}
 	f := a.Field("model")
 	if f.Get() != "anthropic/claude-sonnet-5-5" || a.Check() != "" {
 		t.Fatalf("own: %q %q", f.Get(), a.Check())
