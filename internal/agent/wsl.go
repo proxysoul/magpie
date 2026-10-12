@@ -447,7 +447,7 @@ var wslKinds = []wslKind{
 			}
 		}},
 	{id: "empryo", name: "Empryo", dir: ".empryo", bin: "empryo", in: empryoIn,
-		restart: newNotice("{agent} in WSL {distro} reads its config at start-up — restart open empryo sessions to use this.")},
+		restart: newNotice("{agent} in WSL {distro} reloads these settings live in v3. Project settings and existing tabs can override this global default. Older versions may need a restart.")},
 	// Ante ships macOS and Linux builds alone, and suggests WSL on Windows,
 	// so a Windows machine's Ante is usually this one
 	{id: "ante", name: "Ante", dir: ".ante", bin: "ante", in: anteIn,

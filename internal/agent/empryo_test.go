@@ -11,9 +11,9 @@ import (
 
 func TestEmpryo(t *testing.T) {
 	home, _ := museHome(t)
-	path := filepath.Join(home, ".empryo", "config.json")
+	t.Setenv("LOCALAPPDATA", filepath.Join(home, "AppData", "Local"))
+	path := empryo(home).Path
 	os.MkdirAll(filepath.Dir(path), 0o755)
-	// a user's own: a provider of theirs, their model and a theme
 	orig := `{
   "providers": [{"id": "lmstudio", "name": "LM Studio", "baseURL": "http://localhost:1234/v1"}],
   "defaultModel": "anthropic/claude-sonnet-5-5",
@@ -49,7 +49,7 @@ func TestEmpryo(t *testing.T) {
 		t.Fatalf("options: %v", vals)
 	}
 
-	for range 2 { // twice: one magpie provider, and the user's model kept
+	for range 2 {
 		if err := f.Set("magpie/deepseek/pro"); err != nil {
 			t.Fatal(err)
 		}
@@ -67,7 +67,6 @@ func TestEmpryo(t *testing.T) {
 		t.Fatalf("on: %q %q", f.Get(), a.Check())
 	}
 
-	// magpie's provider pointed elsewhere
 	b, _ := os.ReadFile(path)
 	os.WriteFile(path, []byte(strings.Replace(string(b), gatewayV1(), "http://elsewhere/v1", 1)), 0o644)
 	if !strings.Contains(a.Check(), "http://elsewhere/v1") {
@@ -75,7 +74,6 @@ func TestEmpryo(t *testing.T) {
 	}
 	os.WriteFile(path, b, 0o644)
 
-	// stepping out puts back what the user had
 	if err := f.Set(""); err != nil {
 		t.Fatal(err)
 	}
@@ -83,7 +81,6 @@ func TestEmpryo(t *testing.T) {
 		t.Fatalf("restore: %v", m)
 	}
 
-	// a file magpie made goes again
 	os.Remove(path)
 	if err := f.Set("magpie/deepseek/flash"); err != nil {
 		t.Fatal(err)

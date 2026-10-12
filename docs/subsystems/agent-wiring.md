@@ -26,6 +26,15 @@ something else shows up as drift.
 | Agents a plugin adds | A plugin's `magpie.agent` module (or a `*.agent.js` file) says where an agent magpie has no setup of its own keeps its model (`config`, `format`, `model`, `prefix`), and its `connect` returns the other keys to write. `agentplug` compiles each in moejs (via `jsmod`, as gateway middleware is), reloads it when plugins.json or the file changes, and keeps why one didn't load. `plugged` makes each an `Agent` with `Plugin` set, listed after magpie's own; an id one of magpie's own agents has is refused (`PluginErrors`). | [`agentplug.go`](../../internal/agentplug/agentplug.go), [`plugged.go`](../../internal/agent/plugged.go) |
 | Environment-only agents | Agents that read the gateway only from the environment get a `Launch` command. Cursor Private Inference instead gets user-level variables (`cursorLocalOn`, `KeepCursorLocalEnv`), and magpie writes none of Cursor's own files. It is found by its product.json in the apps folders, in the folder Windows' list of installed programs names (`cursorLocalInstalls`, any folder picked in its installer), or as its Linux AppImage (`Cursor_Private_Inference-…AppImage`) in the folders downloads are kept in (#1254). Its effort field is kept in magpie (`provider.AgentEffort`) and asked by the gateway, its levels those of the models it lists (`cursorLocalEfforts`, #1003). | [`cursorlocal.go`](../../internal/agent/cursorlocal.go) |
 
+## Empryo v3
+
+Empryo reads `~/.empryo/config.json` on macOS, Linux and WSL, and
+`%LOCALAPPDATA%/Empryo/config.json` on native Windows. Magpie changes the
+global default only; project settings and existing tab selections can
+still override it. v3 reloads settings live; older versions may need a
+restart. Reset restores a replaced provider and preserves unrelated edits.
+For a keyless connection under WSL NAT, run the gateway inside WSL.
+
 ## Runtime path
 
 1. **Connect.** The Agents page's switch calls `ConnectHow` (`POST /api/agents/{action}/{id}` in [`internal/gui/api.go`](../../internal/gui/api.go)). It stashes the current values (`<id>.connect.was`). It brings back the models used before a switch-off (`reconnect`), or calls `Join` where the agent keeps its own model (Codex signed in with ChatGPT). Otherwise it picks a model by the order `ConnectHow` documents and sets it through `Apply`.
